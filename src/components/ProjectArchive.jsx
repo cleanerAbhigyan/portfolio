@@ -16,11 +16,13 @@ export default function ProjectArchive({
   setProjects,
   onBackToHome,
   isCmsAdmin = false,
+  cmsMode = false,
   onOpenExportModal,
   onOpenCaseStudy,
   showToast,
   themeClasses
 }) {
+  const isWriteActive = Boolean(cmsMode || isCmsAdmin);
   const [archiveCategory, setArchiveCategory] = useState('All');
   const [archiveSearch, setArchiveSearch] = useState('');
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
@@ -32,7 +34,7 @@ export default function ProjectArchive({
     description: '',
     metrics: '',
     tags: '',
-    link: 'https://github.com',
+    link: 'https://github.com/abhigyan',
     featured: false,
     problem: '',
     architectureNodes: '',
@@ -99,7 +101,7 @@ export default function ProjectArchive({
       description: '',
       metrics: '',
       tags: '',
-      link: 'https://github.com',
+      link: 'https://github.com/abhigyan',
       featured: false,
       problem: '',
       architectureNodes: '',
@@ -156,7 +158,7 @@ export default function ProjectArchive({
         </div>
 
         <div className="flex items-center gap-2">
-          {isCmsAdmin && onOpenExportModal && (
+          {isWriteActive && onOpenExportModal && (
             <button
               onClick={onOpenExportModal}
               title="Export changes to src/data/initialData.js"
@@ -167,13 +169,15 @@ export default function ProjectArchive({
             </button>
           )}
 
-          <button
-            onClick={() => setShowAddProjectModal(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs sm:text-sm transition-all shadow-sm"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Project</span>
-          </button>
+          {isWriteActive && (
+            <button
+              onClick={() => setShowAddProjectModal(true)}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs sm:text-sm transition-all shadow-sm"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add Project</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -514,27 +518,37 @@ export default function ProjectArchive({
                         <ArrowUpRight className="w-3 h-3" />
                       </button>
 
-                      {isCmsAdmin && (
-                        <>
-                          <button
-                            onClick={() => handleToggleFeaturedProject(proj.id)}
-                            title="Toggle Featured on Home Bento"
-                            className={`p-1.5 rounded-lg border text-xs transition-colors ${
-                              proj.featured
-                                ? 'border-emerald-500/50 text-emerald-400 bg-emerald-500/10'
-                                : `${themeClasses.cardSubtle} ${themeClasses.textSubtle}`
-                            }`}
-                          >
-                            ★
-                          </button>
-                          <button
-                            onClick={() => handleDeleteProject(proj.id, proj.title)}
-                            title="Delete Project"
-                            className="p-1.5 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </>
+                      {/* Star / Featured Icon */}
+                      {isWriteActive ? (
+                        <button
+                          onClick={() => handleToggleFeaturedProject(proj.id)}
+                          title="Toggle Featured on Home Bento"
+                          className={`p-1.5 rounded-lg border text-xs transition-colors ${
+                            proj.featured
+                              ? 'border-emerald-500/50 text-emerald-400 bg-emerald-500/10'
+                              : `${themeClasses.cardSubtle} ${themeClasses.textSubtle}`
+                          }`}
+                        >
+                          ★
+                        </button>
+                      ) : proj.featured ? (
+                        <span
+                          title="Featured on Home Hub"
+                          className="p-1.5 rounded-lg border text-xs cursor-default border-emerald-500/30 text-emerald-400 bg-emerald-500/10"
+                        >
+                          ★
+                        </span>
+                      ) : null}
+
+                      {/* Delete Button (Owner Only) */}
+                      {isWriteActive && (
+                        <button
+                          onClick={() => handleDeleteProject(proj.id, proj.title)}
+                          title="Delete Project"
+                          className="p-1.5 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                       )}
                       <a
                         href={proj.link}

@@ -8,7 +8,7 @@ export const INITIAL_PROJECTS = [
     description: 'Automated architecture synchronizing complex enterprise project schemas, task hierarchies, and resource allocations into OpenProject via REST APIs with idempotent retry logic.',
     metrics: '99.8% sync reliability • 40 hrs/mo saved',
     tags: ['Python', 'REST API', 'OpenProject', 'Data Engineering', 'ETL'],
-    link: 'https://github.com',
+    link: 'https://github.com/abhigyan',
     status: 'Production',
     caseStudy: {
       problem: 'Legacy project schemas, task hierarchies, and resource allocations across disparate systems were synchronized via brittle manual spreadsheets, causing continuous data drift, lost billable hours, and sync collisions during concurrent updates.',
@@ -35,7 +35,7 @@ export const INITIAL_PROJECTS = [
     description: 'Interactive management dashboard processing raw employee punch logs into granular work/break durations, shift adherence metrics, and operational cost leakage insights.',
     metrics: 'Processes 50k+ punch events • Real-time Plotly',
     tags: ['Python', 'Dash', 'Plotly', 'Pandas', 'SQL'],
-    link: 'https://github.com',
+    link: 'https://github.com/abhigyan',
     status: 'Production',
     caseStudy: {
       problem: 'Fragmented biometric punch logs across multiple operating facilities obscured shift adherence, break leakage, and overtime anomalies, resulting in uncontrolled monthly labor cost spikes and delayed payroll reconciliation.',
@@ -62,7 +62,7 @@ export const INITIAL_PROJECTS = [
     description: 'Modular backend service with custom validation middleware, asynchronous job processing, and Model Context Protocol (MCP) LLM agent tool calling.',
     metrics: 'Sub-120ms API latency • Dockerized',
     tags: ['Node.js', 'Express', 'Docker', 'Claude API', 'MCP'],
-    link: 'https://github.com',
+    link: 'https://github.com/abhigyan',
     status: 'Active',
     caseStudy: {
       problem: 'Integrating LLM intelligence into deterministic backend business workflows requires strict payload validation, agentic tool execution, and low-latency response times without locking up the server event loop.',
@@ -167,7 +167,7 @@ export const INITIAL_PROJECTS = [
     description: 'Multi-stage Docker builds and Docker Compose orchestration templates for running isolated Python ETL workers alongside Express REST gateways.',
     metrics: '65% smaller image footprint',
     tags: ['Docker', 'Linux', 'Python', 'Node.js', 'DevOps'],
-    link: 'https://github.com',
+    link: 'https://github.com/abhigyan',
     status: 'Open Source',
     caseStudy: {
       problem: 'Developing and deploying heterogeneous microservices (Python for data processing and Node.js for REST endpoints) caused environment parity drift and bloated deployment images.',
@@ -193,7 +193,7 @@ export const INITIAL_PROJECTS = [
     description: 'CLI utility to compare staging and production relational schemas, detect drift, and generate safe rollback scripts automatically.',
     metrics: 'Zero-downtime migrations',
     tags: ['SQL', 'Python', 'PostgreSQL', 'CLI'],
-    link: 'https://github.com',
+    link: 'https://github.com/abhigyan',
     status: 'Internal Tool',
     caseStudy: {
       problem: 'Manual relational schema alterations frequently introduced undocumented schema drift between staging and production databases, risking failed deployments and data loss.',
@@ -219,7 +219,7 @@ export const INITIAL_PROJECTS = [
     description: 'Custom Markdown indexing script that converts daily engineering logs and architectural decision records into queryable local embeddings.',
     metrics: '400+ Linked Engineering Notes',
     tags: ['Obsidian', 'Markdown', 'Python', 'Local LLM'],
-    link: 'https://github.com',
+    link: 'https://github.com/abhigyan',
     status: 'Personal',
     caseStudy: {
       problem: 'Engineering notes, architectural decision records (ADRs), and debugging solutions spread across months of work became difficult to cross-reference and retrieve quickly.',
@@ -245,7 +245,7 @@ export const INITIAL_PROJECTS = [
     description: 'Lightweight token-bucket rate limiting and JWT role verification middleware package for Express.js APIs.',
     metrics: 'Zero external bloat',
     tags: ['Node.js', 'Express', 'JavaScript', 'Security'],
-    link: 'https://github.com',
+    link: 'https://github.com/abhigyan',
     status: 'Archived',
     caseStudy: {
       problem: 'Third-party rate-limiting packages for small Express services often introduce heavy Redis dependencies and complex configurations for basic endpoint protection.',

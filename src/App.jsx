@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   CheckCircle2,
-  RotateCcw
+  RotateCcw,
+  Lock
 } from 'lucide-react';
 import { INITIAL_PROJECTS, INITIAL_POSTS } from './data/initialData';
 import { useLocalStorage } from './hooks/useLocalStorage';
@@ -12,6 +13,7 @@ import ProjectArchive from './components/ProjectArchive';
 import BlogCMS from './components/BlogCMS';
 import ExportInitialDataModal from './components/ExportInitialDataModal';
 import CaseStudyDrawer from './components/CaseStudyDrawer';
+import OwnerUnlockModal from './components/OwnerUnlockModal';
 
 export default function App() {
   // Theme state (Dark mode default as requested)
@@ -23,8 +25,10 @@ export default function App() {
   // Hub Mode: 'engineering' | 'creative'
   const [hubMode, setHubMode] = useState('engineering');
 
-  // CMS Admin Mode Toggle
-  const [isCmsAdmin, setIsCmsAdmin] = useState(false);
+  // Security: Owner Unlock & CMS Write Mode states
+  const [isOwnerUnlocked, setIsOwnerUnlocked] = useState(false);
+  const [cmsMode, setCmsMode] = useState(false);
+  const [showPinModal, setShowPinModal] = useState(false);
 
   // Export to initialData.js Modal Toggle
   const [showExportModal, setShowExportModal] = useState(false);
@@ -59,6 +63,59 @@ export default function App() {
     }
   }, [darkMode]);
 
+  // Initial Security Mount Check: localhost | ?admin=true | sessionStorage
+  useEffect(() => {
+    try {
+      const hostname = window.location.hostname;
+      const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+      const hasAdminQuery = window.location.search.includes('admin=true');
+      const hasSession = sessionStorage.getItem('abhigyan_cms_unlocked') === 'true';
+
+      if (isLocal || hasAdminQuery || hasSession) {
+        setIsOwnerUnlocked(true);
+        if (hasSession || hasAdminQuery) {
+          setCmsMode(true);
+        }
+      }
+    } catch {
+      // Safe fallback in restricted environments
+    }
+  }, []);
+
+  // Global Keyboard Shortcut: Shift + A to open Owner PIN Modal or toggle CMS mode
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const target = e.target;
+      const isInput =
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable;
+
+      if (isInput) return;
+
+      if (e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault();
+        if (!isOwnerUnlocked) {
+          setShowPinModal(true);
+        } else {
+          setCmsMode((prev) => {
+            const next = !prev;
+            showToast(
+              next
+                ? 'Owner CMS: Write Mode Active'
+                : 'Owner CMS: Read-Only Mode Active'
+            );
+            return next;
+          });
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOwnerUnlocked]);
+
   // Live IST Telemetry Clock (UTC+5:30)
   useEffect(() => {
     const updateClock = () => {
@@ -85,18 +142,18 @@ export default function App() {
   };
 
   const handleCopyEmail = () => {
-    const email = 'abhigyan.singh.dev@gmail.com';
+    const email = 'abhigyan62001@gmail.com';
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(email).catch(() => {});
     }
     setCopiedEmail(true);
-    showToast('Email copied to clipboard: abhigyan.singh.dev@gmail.com');
+    showToast('Copied email: abhigyan62001@gmail.com');
     setTimeout(() => setCopiedEmail(false), 2500);
   };
 
   const handleDownloadResume = () => {
-    const resumeContent = `ABHIGYAN SINGH
-Bengaluru, Karnataka, India | abhigyan.singh.dev@gmail.com
+    const resumeContent = `ABHIGYAN
+Bengaluru, Karnataka, India | abhigyan62001@gmail.com
 Data & AI Engineer • Full-Stack Builder
 
 SUMMARY
@@ -122,7 +179,7 @@ Independent Builder & Creator (Ongoing)
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'Abhigyan_Singh_Resume.txt';
+    a.download = 'Abhigyan_Resume_2026.txt';
     a.click();
     URL.revokeObjectURL(url);
     showToast('Resume downloaded! (Replace with your PDF anytime)');
@@ -147,6 +204,24 @@ Independent Builder & Creator (Ongoing)
       setPosts(backup.posts);
     }
     showToast('Imported and restored data from backup!');
+  };
+
+  const handleUnlockOwnerSuccess = () => {
+    setIsOwnerUnlocked(true);
+    setCmsMode(true);
+    try {
+      sessionStorage.setItem('abhigyan_cms_unlocked', 'true');
+    } catch {}
+    showToast('Owner CMS Write-Access Unlocked');
+  };
+
+  const handleLockOwner = () => {
+    try {
+      sessionStorage.removeItem('abhigyan_cms_unlocked');
+    } catch {}
+    setIsOwnerUnlocked(false);
+    setCmsMode(false);
+    showToast('Locked: Public Read-Only Mode');
   };
 
   const handleExploreBento = () => {
@@ -212,15 +287,19 @@ Independent Builder & Creator (Ongoing)
         setActiveTab={setActiveTab}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
-        isCmsAdmin={isCmsAdmin}
-        setIsCmsAdmin={(val) => {
-          setIsCmsAdmin(val);
+        isOwnerUnlocked={isOwnerUnlocked}
+        cmsMode={cmsMode}
+        onToggleCmsMode={() => {
+          setCmsMode(!cmsMode);
           showToast(
-            val
-              ? 'CMS Admin Mode enabled: You can now add/edit posts & projects.'
-              : 'CMS Admin Mode disabled.'
+            !cmsMode
+              ? 'CMS Write Mode enabled: You can now add/edit posts & projects.'
+              : 'CMS Read-Only Mode enabled.'
           );
         }}
+        onLockOwner={handleLockOwner}
+        isCmsAdmin={isOwnerUnlocked && cmsMode}
+        setIsCmsAdmin={setCmsMode}
         projectCount={projects.length}
         onCopyEmail={handleCopyEmail}
         onOpenExportModal={() => setShowExportModal(true)}
@@ -278,7 +357,8 @@ Independent Builder & Creator (Ongoing)
               setActiveTab('home');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            isCmsAdmin={isCmsAdmin}
+            cmsMode={isOwnerUnlocked && cmsMode}
+            isCmsAdmin={isOwnerUnlocked && cmsMode}
             onOpenExportModal={() => setShowExportModal(true)}
             onOpenCaseStudy={(proj) => setSelectedCaseStudyProject(proj)}
             showToast={showToast}
@@ -297,8 +377,10 @@ Independent Builder & Creator (Ongoing)
               setActiveTab('home');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            isCmsAdmin={isCmsAdmin}
-            setIsCmsAdmin={setIsCmsAdmin}
+            cmsMode={isOwnerUnlocked && cmsMode}
+            isCmsAdmin={isOwnerUnlocked && cmsMode}
+            setCmsMode={setCmsMode}
+            setIsCmsAdmin={setCmsMode}
             onOpenExportModal={() => setShowExportModal(true)}
             showToast={showToast}
             themeClasses={themeClasses}
@@ -325,18 +407,26 @@ Independent Builder & Creator (Ongoing)
         darkMode={darkMode}
       />
 
+      {/* Owner Security PIN Modal */}
+      <OwnerUnlockModal
+        isOpen={showPinModal}
+        onClose={() => setShowPinModal(false)}
+        onSuccess={handleUnlockOwnerSuccess}
+        darkMode={darkMode}
+      />
+
       {/* Footer */}
       <footer className={`mt-20 border-t py-8 text-xs ${themeClasses.border} ${themeClasses.textSubtle}`}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <span className="font-mono font-semibold text-zinc-400">
-              Abhigyan Singh
+              © 2026 Abhigyan
             </span>
             <span>—</span>
             <span>Data & AI Engineering • Systems Architecture</span>
           </div>
 
-          <div className="flex items-center gap-4 font-mono">
+          <div className="flex flex-wrap items-center gap-4 font-mono">
             <button
               onClick={() => {
                 setActiveTab('home');
@@ -362,7 +452,7 @@ Independent Builder & Creator (Ongoing)
               }}
               className="hover:text-emerald-400 transition-colors"
             >
-              Blog ({posts.length})
+              {isOwnerUnlocked ? 'Blog / CMS' : 'Writing'} ({posts.length})
             </button>
             <button
               onClick={handleResetDemoData}
@@ -371,6 +461,32 @@ Independent Builder & Creator (Ongoing)
             >
               <RotateCcw className="w-3 h-3" />
               <span>Reset Data</span>
+            </button>
+            {/* Discrete Owner CMS PIN Trigger */}
+            <button
+              onClick={() => {
+                if (!isOwnerUnlocked) {
+                  setShowPinModal(true);
+                } else {
+                  setCmsMode(!cmsMode);
+                  showToast(
+                    !cmsMode
+                      ? 'Owner CMS: Write Mode Active'
+                      : 'Owner CMS: Read-Only Mode Active'
+                  );
+                }
+              }}
+              className="inline-flex items-center gap-1 text-zinc-500 hover:text-emerald-400 transition-colors"
+              title="Owner CMS Authentication (Shift + A)"
+            >
+              <Lock className="w-3 h-3 text-emerald-400/80" />
+              <span>
+                {isOwnerUnlocked
+                  ? cmsMode
+                    ? 'Owner: Write'
+                    : 'Owner: Read'
+                  : 'Owner'}
+              </span>
             </button>
           </div>
         </div>

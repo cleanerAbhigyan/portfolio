@@ -1,6 +1,6 @@
 # System Architecture & Technical Specifications
 
-This document outlines the architecture, data flow, component hierarchy, and mathematical models powering the **Abhigyan Singh Portfolio & CMS** application.
+This document outlines the architecture, data flow, component hierarchy, security models, and mathematical geometry powering the **Abhigyan Portfolio & CMS** application.
 
 ---
 
@@ -8,15 +8,16 @@ This document outlines the architecture, data flow, component hierarchy, and mat
 
 ```mermaid
 graph TD
-    App[App.jsx - Root State & Theme Orchestrator]
+    App[App.jsx - Root State, Theme & Security Orchestrator]
     
-    App --> Navbar[Navbar.jsx - Floating Glassmorphic Pill]
-    App --> Hero[HeroLanding.jsx - Full Viewport Landing]
-    App --> Bento[BentoHub.jsx - Linear-Style Bento Grid]
-    App --> Archive[ProjectArchive.jsx - Full Filterable Directory]
-    App --> Blog[BlogCMS.jsx - Reader & Markdown CMS]
+    App --> Navbar[Navbar.jsx - Floating Glassmorphic Pill & Public CTA]
+    App --> Hero[HeroLanding.jsx - Full Viewport Landing & Parallax Portrait]
+    App --> Bento[BentoHub.jsx - Linear-Style Bento Grid & Engineering Telemetry]
+    App --> Archive[ProjectArchive.jsx - Filterable Directory & Owner Guards]
+    App --> Blog[BlogCMS.jsx - Technical Reader & Markdown CMS]
     App --> Drawer[CaseStudyDrawer.jsx - Slide-Over Architecture View]
     App --> Modal[ExportInitialDataModal.jsx - Codebase Sync & Backup]
+    App --> OwnerModal[OwnerUnlockModal.jsx - PIN Security Modal]
     
     Hero --> Portrait[ParallaxPortrait - 3D Tilt & Studio Lighting]
     
@@ -49,7 +50,7 @@ sequenceDiagram
         Hook-->>App: Seed data from initialData.js
     end
     
-    User->>Sub: Creates Project / Publishes Blog Post
+    User->>Sub: Creates Project / Publishes Blog Post (Owner Mode)
     Sub->>App: setProjects(...) / setPosts(...)
     App->>Hook: State update triggered
     Hook->>LS: setItem(key, JSON.stringify(val))
@@ -84,7 +85,61 @@ $$\text{style} = \text{perspective}(1000\text{px})\;\text{rotateX}(\text{rotateX
 
 ---
 
-## 4. Design System Tokens
+## 4. Public Read-Only Security Architecture & Owner Unlock Flow
+
+The application provides a two-tiered security model:
+1. **Public Read-Only Mode (Default for all web visitors):**
+   - Navigation displays **WRITING** instead of CMS.
+   - Navbar right slot displays an interactive **"● Available for Roles"** CTA that copies `abhigyan62001@gmail.com`.
+   - CMS editor, project creation modals, delete buttons, and state export triggers are hidden.
+   - Star/pin icons in the Project Archive are rendered as read-only indicators.
+2. **Owner Write-Access Mode (Authorized Owner):**
+   - Unlocked automatically in local environments (`localhost`, `127.0.0.1`), through `?admin=true` URL query parameter, or when a valid session token exists in `sessionStorage`.
+   - On-demand unlock via global **`Shift + A`** keyboard listener or discrete `"🔒 Owner"` footer trigger, which opens `OwnerUnlockModal`.
+   - Verifies security PIN against `import.meta.env.VITE_CMS_PIN || '2026'`.
+   - Upon unlock, owner can toggle `CMS: WRITE` and `CMS: READ`, edit articles, add projects, and sync live state to `initialData.js`.
+   - A single click on the **Lock** button in Navbar clears the session and instantly returns the UI to public read-only mode.
+
+```mermaid
+sequenceDiagram
+    participant Visitor as Public Visitor / Owner
+    participant App as App.jsx
+    participant Modal as OwnerUnlockModal.jsx
+    participant Session as window.sessionStorage
+
+    Visitor->>App: Loads Site
+    App->>App: Check hostname (localhost), URL (?admin=true), or sessionStorage
+    alt Is Localhost / Has Session / Query Flag
+        App->>App: isOwnerUnlocked = true
+    else External Visitor
+        App->>App: isOwnerUnlocked = false (Public Read-Only)
+    end
+
+    opt Manual Owner Unlock
+        Visitor->>App: Presses Shift + A or clicks "🔒 Owner" in footer
+        App->>Modal: Opens PIN modal
+        Visitor->>Modal: Inputs Security PIN (e.g., 2026)
+        alt PIN Matches VITE_CMS_PIN || '2026'
+            Modal->>App: onSuccess()
+            App->>Session: setItem('abhigyan_cms_unlocked', 'true')
+            App->>App: isOwnerUnlocked = true, cmsMode = true
+            App->>Visitor: Toast: "Owner CMS Write-Access Unlocked"
+        else Invalid PIN
+            Modal->>Visitor: Error: "Invalid Owner PIN. Access denied."
+        end
+    end
+
+    opt Re-Lock to Public Read-Only
+        Visitor->>App: Clicks Lock Button in Navbar
+        App->>Session: removeItem('abhigyan_cms_unlocked')
+        App->>App: isOwnerUnlocked = false, cmsMode = false
+        App->>Visitor: Toast: "Locked: Public Read-Only Mode"
+    end
+```
+
+---
+
+## 5. Design System Tokens
 
 | Design Token | CSS / Tailwind Class | Hex / HSL Value |
 |---|---|---|

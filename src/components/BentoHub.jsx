@@ -172,7 +172,7 @@ export default function BentoHub({
 
             <div className="flex items-center gap-2">
               <a
-                href="https://github.com"
+                href="https://github.com/abhigyan"
                 target="_blank"
                 rel="noreferrer"
                 title="GitHub"

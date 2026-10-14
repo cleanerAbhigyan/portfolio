@@ -331,11 +331,14 @@ export default function BlogCMS({
   setPosts,
   onBackToHome,
   isCmsAdmin = false,
+  cmsMode = false,
   setIsCmsAdmin,
+  setCmsMode,
   onOpenExportModal,
   showToast,
   themeClasses
 }) {
+  const isWriteActive = Boolean(cmsMode || isCmsAdmin);
   const [selectedPost, setSelectedPost] = useState(null);
   const [editingPost, setEditingPost] = useState(null); // null | 'new' | postId
   const [lightboxImg, setLightboxImg] = useState(null); // null | { src, alt }
@@ -572,41 +575,39 @@ ${post.content}
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {onOpenExportModal && isCmsAdmin && (
+        {isWriteActive && (
+          <div className="flex flex-wrap items-center gap-2">
+            {onOpenExportModal && (
+              <button
+                onClick={onOpenExportModal}
+                title="Export changes to src/data/initialData.js"
+                className="px-3 py-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-mono inline-flex items-center gap-1.5 transition-all shadow-sm"
+              >
+                <Database className="w-3.5 h-3.5" />
+                <span>Export initialData.js</span>
+              </button>
+            )}
+
             <button
-              onClick={onOpenExportModal}
-              title="Export changes to src/data/initialData.js"
-              className="px-3 py-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-mono inline-flex items-center gap-1.5 transition-all shadow-sm"
+              onClick={() => {
+                if (setIsCmsAdmin) setIsCmsAdmin(!isCmsAdmin);
+                if (setCmsMode) setCmsMode(!cmsMode);
+              }}
+              className="px-3 py-2 rounded-xl border text-xs font-mono inline-flex items-center gap-1.5 transition-all border-emerald-500/50 bg-emerald-500/10 text-emerald-400"
             >
-              <Database className="w-3.5 h-3.5" />
-              <span>Export initialData.js</span>
+              <Edit3 className="w-3.5 h-3.5" />
+              <span>CMS: WRITE ACTIVE</span>
             </button>
-          )}
 
-          <button
-            onClick={() => setIsCmsAdmin(!isCmsAdmin)}
-            className={`px-3 py-2 rounded-xl border text-xs font-mono inline-flex items-center gap-1.5 transition-all ${
-              isCmsAdmin
-                ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400'
-                : `${themeClasses.card} ${themeClasses.textMuted}`
-            }`}
-          >
-            <Edit3 className="w-3.5 h-3.5" />
-            <span>{isCmsAdmin ? 'CMS Admin: Active' : 'Enable CMS Editor'}</span>
-          </button>
-
-          <button
-            onClick={() => {
-              setIsCmsAdmin(true);
-              startNewPost();
-            }}
-            className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs inline-flex items-center gap-1.5 transition-all shadow-sm"
-          >
-            <Plus className="w-4 h-4" />
-            <span>New Post</span>
-          </button>
-        </div>
+            <button
+              onClick={startNewPost}
+              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs inline-flex items-center gap-1.5 transition-all shadow-sm"
+            >
+              <Plus className="w-4 h-4" />
+              <span>New Post</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* VIEW A: CMS Post Editor */}
@@ -787,13 +788,15 @@ ${post.content}
                 <span>Download .md</span>
               </button>
 
-              <button
-                onClick={() => startEditPost(selectedPost)}
-                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-xs font-mono transition-colors ${themeClasses.cardSubtle} hover:border-emerald-500/40`}
-              >
-                <Edit3 className="w-3 h-3 text-emerald-400" />
-                <span>Edit in CMS</span>
-              </button>
+              {isWriteActive && (
+                <button
+                  onClick={() => startEditPost(selectedPost)}
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-xs font-mono transition-colors ${themeClasses.cardSubtle} hover:border-emerald-500/40`}
+                >
+                  <Edit3 className="w-3 h-3 text-emerald-400" />
+                  <span>Edit in CMS</span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -936,7 +939,7 @@ ${post.content}
                   className="flex items-center gap-2"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {isCmsAdmin && (
+                  {isWriteActive && (
                     <>
                       <button
                         onClick={() => startEditPost(post)}

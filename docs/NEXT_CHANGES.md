@@ -1,6 +1,6 @@
 # Upcoming Changes & Roadmap (NEXT_CHANGES.md)
 
-This document tracks upcoming architectural iterations, planned enhancements, and feature requests for the **Abhigyan Singh Portfolio & CMS** platform.
+This document tracks upcoming architectural iterations, planned enhancements, and feature requests for the **Abhigyan Portfolio & CMS** platform.
 
 Tasks are prioritized by engineering impact and user experience value.
 

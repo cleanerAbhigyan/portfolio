@@ -1,6 +1,6 @@
-# Documentation Hub — Abhigyan Singh Portfolio
+# Documentation Hub — Abhigyan Portfolio
 
-Welcome to the engineering and architectural documentation for the **Abhigyan Singh Portfolio & CMS** platform.
+Welcome to the engineering and architectural documentation for the **Abhigyan Portfolio & CMS** platform.
 
 This directory contains the complete technical summary of what has been constructed, how the system is architected, and the prioritized roadmap for upcoming iterations and feature enhancements.
 

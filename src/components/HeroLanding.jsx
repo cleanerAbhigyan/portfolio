@@ -39,18 +39,18 @@ export function ParallaxPortrait({ portraitSrc = '/hero-portrait.jpg' }) {
         {imgLoaded ? (
           <img
             src={portraitSrc}
-            alt="Abhigyan Singh - Portrait"
+            alt="Abhigyan - Portrait"
             onError={() => setImgLoaded(false)}
             className="w-full h-full object-cover object-center pointer-events-none brightness-95 contrast-105"
           />
         ) : (
-          /* Clean Obsidian Silhouette Fallback if image is missing */
+          /* Clean Obsidian Silhouette Fallback with Monogram A if image is missing */
           <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-zinc-900 to-zinc-950 p-8 text-center">
-            <div className="w-24 h-24 rounded-full bg-zinc-800/80 border border-zinc-700 flex items-center justify-center mb-4 text-emerald-400">
-              <Cpu className="w-10 h-10 animate-pulse" />
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 flex items-center justify-center mb-4 text-emerald-400 font-mono text-3xl font-bold tracking-tighter shadow-lg">
+              <span>A</span>
             </div>
             <div className="font-mono text-sm font-bold text-zinc-200">
-              Studio Portrait
+              Abhigyan
             </div>
             <div className="text-xs text-zinc-500 font-mono mt-1">
               Add hero-portrait.jpg to /public
@@ -120,9 +120,9 @@ export default function HeroLanding({
               HI, I'M
             </div>
             <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight leading-[0.95] text-zinc-100">
-              Abhigyan{' '}
+              Abhigyan
               <span className="italic font-serif font-normal bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-300 bg-clip-text text-transparent">
-                Singh
+                .
               </span>
             </h1>
           </div>
