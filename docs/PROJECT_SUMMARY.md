@@ -34,8 +34,9 @@ portfolio/
 │   ├── ARCHITECTURE.md                  # State flow, coordinate math & security diagrams
 │   └── NEXT_CHANGES.md                  # Prioritized future roadmap & upcoming tasks
 ├── public/
-│   ├── hero-portrait.jpg                # Calibrated studio portrait (1586x992 optimized JPEG)
-│   └── hero-portrait.png
+│   ├── image.png                        # Hero studio portrait (1600x900 PNG)
+│   ├── hero-portrait.png
+│   └── hero-portrait.jpg
 ├── src/
 │   ├── components/
 │   │   ├── Navbar.jsx                   # Floating glassmorphic navbar (Public "Available for Roles" & Owner CMS)
@@ -73,7 +74,7 @@ portfolio/
   - Architectural pillar chips: `Enterprise REST Sync`, `Python & Dash Telemetry`, `Docker Microservices`, `Claude MCP Agents`, `Notion OS Systems`.
   - Pill CTAs: `RESUME ↗` (triggers instant formatted download of `Abhigyan_Resume_2026.txt`) and `LET'S TALK` (copies `abhigyan62001@gmail.com` to clipboard with floating feedback toast).
 - **Right Column (`ParallaxPortrait`):**
-  - Displays high-resolution studio portrait from `/hero-portrait.jpg`.
+  - Displays high-resolution studio portrait from `/image.png`.
   - **3D Parallax Tilt:** Uses `perspective(1000px) rotateX(...) rotateY(...)` dynamically derived from `useMousePosition` (`nx, ny`) clamped to a maximum tilt of `4deg` for an immersive card depth effect.
   - **Ambient Studio Lighting:** Layered radial spotlight blending amber and rose gradients with soft studio vignette masks for seamless background integration.
   - **Mobile Gyroscope Support:** Normalizes `deviceorientation` (`gamma` and `beta`) to tilt the card naturally on smartphones and tablets.

@@ -13,7 +13,7 @@ import { useMousePosition } from '../hooks/useMousePosition';
  * Displays the studio portrait with smooth 60fps 3D parallax tilt
  * driven by mouse cursor position or device gyroscope, with warm ambient studio lighting.
  */
-export function ParallaxPortrait({ portraitSrc = '/hero-portrait.jpg' }) {
+export function ParallaxPortrait({ portraitSrc = '/image.png' }) {
   const { nx, ny } = useMousePosition();
   const [imgLoaded, setImgLoaded] = useState(true);
 
@@ -53,7 +53,7 @@ export function ParallaxPortrait({ portraitSrc = '/hero-portrait.jpg' }) {
               Abhigyan
             </div>
             <div className="text-xs text-zinc-500 font-mono mt-1">
-              Add hero-portrait.jpg to /public
+              Add image.png to /public
             </div>
           </div>
         )}
@@ -176,7 +176,7 @@ export default function HeroLanding({
             RIGHT COLUMN (Clean 3D Parallax Portrait)
            ========================================== */}
         <div className="lg:col-span-5 flex justify-center lg:justify-end">
-          <ParallaxPortrait portraitSrc="/hero-portrait.jpg" />
+          <ParallaxPortrait portraitSrc="/image.png" />
         </div>
       </div>
 
